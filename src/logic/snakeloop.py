@@ -61,7 +61,6 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
     # Game State Variables
     is_game_over = False
     is_paused = False
-    is_calculating_route = False
 
     # Snake Position and Direction
     snake_head_position = Point(300, 300)
@@ -73,15 +72,15 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
     snake_length = 1
 
     # Food and Food Score
-    food_position = Point(random.randint(0, screen_width) // pixel_size * pixel_size,
-                          random.randint(0, screen_height) // pixel_size * pixel_size)
+    food_position = Point(random.randint(0, screen_width - pixel_size) // pixel_size * pixel_size,
+                          random.randint(0, screen_height - pixel_size) // pixel_size * pixel_size)
+    while food_position in snake_body:
+        food_position = Point(random.randint(0, screen_width - pixel_size) // pixel_size * pixel_size,
+                              random.randint(0, screen_height - pixel_size) // pixel_size * pixel_size)
 
     print("Head", snake_head_position.to_string())
     while is_game_over is False:
         print("Food", food_position.to_string())
-        # Bot Calculation Process Check
-        if is_calculating_route is True:
-            continue
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -91,14 +90,12 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
                     is_paused = not is_paused
 
         # Get next movement
-        if bot_mode is True and is_calculating_route is False:
+        if bot_mode is True:
             if len(movement_queue) <= 0:
-                is_calculating_route = True
                 print("Head", snake_head_position.to_string())
                 bot_service = SnakeBot(screen, snake_body, pixel_size, show_debug=False)
                 bot_service.plan_route(snake_head_position, food_position)
                 movement_queue = bot_service.get_movement_list()
-                is_calculating_route = False
         else:
             movement_queue = get_keyboard_movement(events)
 
@@ -140,8 +137,10 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
         if snake_head_position == food_position:
             print("chew")
             print("Head", snake_head_position.to_string())
-            food_position = Point(random.randint(0, screen_width) // pixel_size * pixel_size,
-                                  random.randint(0, screen_height) // pixel_size * pixel_size)
+
+            while food_position in snake_body:
+                food_position = Point(random.randint(0, screen_width - pixel_size) // pixel_size * pixel_size,
+                                      random.randint(0, screen_height - pixel_size) // pixel_size * pixel_size)
             snake_length += 1
 
         pygame.display.update()
