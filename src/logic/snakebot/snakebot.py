@@ -15,11 +15,15 @@ class SnakeBot:
         screen_width, screen_height = screen.get_size()
         self.graph = GridMap(screen_width, screen_height, snake_body[:len(snake_body)-1], pixel_size)
         self.show_debug = show_debug
+        self.start_point = Point(0, 0)
+        self.finish_point = Point(0, 0)
 
     def plan_route(self, start_point, finish_point):
         # SETUP: priority queue, starting node, explored nodes
         search_pqueue = PriorityQueue()
         starting_node = SearchNode(start_point, [], 0)
+        self.start_point = start_point
+        self.finish_point = finish_point
 
         # enqueue start_node;
         node_priority = starting_node.get_path_cost() + Point.euclidean_distance(start_point, finish_point)
@@ -76,16 +80,15 @@ class SnakeBot:
             # mark current node as visited
             explored_points.add(current_node.get_search_point())
 
-            if search_pqueue.empty():
-                for position in current_node.get_path_list():
-                    print(position.to_string())
-                self.solution_path = current_node.get_path_list()[0:2]
-
         # Search failed
         print("Search failed")
 
     def get_movement_list(self):
         if len(self.solution_path) <= 1:
-            return []
+            safe_neighbors = self.graph.get_neighbors(self.start_point)
+            if len(safe_neighbors) > 0:
+                return [safe_neighbors[0] - self.start_point]
+            else:
+                return []
         else:
             return [self.solution_path[i] - self.solution_path[i-1] for i in range(1, len(self.solution_path))]
