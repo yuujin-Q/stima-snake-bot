@@ -2,6 +2,9 @@ import pygame
 import time
 import random
 from src.logic.point.point import Point
+from src.logic.snakebot.snakebot import SnakeBot
+
+pixel_size = 25
 
 
 def get_keyboard_movement(events):
@@ -10,13 +13,13 @@ def get_keyboard_movement(events):
     for event in events:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                next_movement_direction.append(Point(-10, 0))
+                next_movement_direction.append(Point(-pixel_size, 0))
             elif event.key == pygame.K_RIGHT:
-                next_movement_direction.append(Point(10, 0))
+                next_movement_direction.append(Point(pixel_size, 0))
             elif event.key == pygame.K_UP:
-                next_movement_direction.append(Point(0, -10))
+                next_movement_direction.append(Point(0, -pixel_size))
             elif event.key == pygame.K_DOWN:
-                next_movement_direction.append(Point(0, 10))
+                next_movement_direction.append(Point(0, pixel_size))
     # print(next_movement_direction)
     return next_movement_direction
 
@@ -58,6 +61,7 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
     # Game State Variables
     is_game_over = False
     is_paused = False
+    is_calculating_route = False
 
     # Snake Position and Direction
     snake_head_position = Point(300, 300)
@@ -65,14 +69,19 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
     movement_queue = []
 
     # Snake Body
-    # TODO: snake body
     snake_body = [snake_head_position]
     snake_length = 1
 
     # Food and Food Score
-    food_position = Point(random.randint(0, screen_width) // 10 * 10, random.randint(0, screen_height) // 10 * 10)
+    food_position = Point(random.randint(0, screen_width) // pixel_size * pixel_size,
+                          random.randint(0, screen_height) // pixel_size * pixel_size)
 
+    print("Head", snake_head_position.to_string())
     while is_game_over is False:
+        print("Food", food_position.to_string())
+        # Bot Calculation Process Check
+        if is_calculating_route is True:
+            continue
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -82,10 +91,14 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
                     is_paused = not is_paused
 
         # Get next movement
-        if bot_mode is True:
+        if bot_mode is True and is_calculating_route is False:
             if len(movement_queue) <= 0:
-                pass
-            # TODO: bot movement
+                is_calculating_route = True
+                print("Head", snake_head_position.to_string())
+                bot_service = SnakeBot(screen, snake_body, pixel_size, show_debug=False)
+                bot_service.plan_route(snake_head_position, food_position)
+                movement_queue = bot_service.get_movement_list()
+                is_calculating_route = False
         else:
             movement_queue = get_keyboard_movement(events)
 
@@ -98,7 +111,7 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
                 0 <= snake_head_position.get_y() < screen_height):
             is_game_over = True
         # Snake head-body collision check
-        for i in range(0, len(snake_body)-1):
+        for i in range(0, len(snake_body) - 1):
             if snake_body[i] == snake_head_position:
                 is_game_over = True
 
@@ -119,15 +132,16 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
         # Draw Snake and Food
         screen.fill((0, 0, 0))
         for snake_segment in snake_body:
-            pygame.draw.rect(screen, green, [snake_segment.get_x(), snake_segment.get_y(), 10, 10])
-        pygame.draw.rect(screen, red, [food_position.get_x(), food_position.get_y(), 10, 10])
+            pygame.draw.rect(screen, green, [snake_segment.get_x(), snake_segment.get_y(), pixel_size, pixel_size])
+        pygame.draw.rect(screen, red, [food_position.get_x(), food_position.get_y(), pixel_size, pixel_size])
 
         # Update score
         show_food_score(screen, snake_length - 1)
         if snake_head_position == food_position:
             print("chew")
-            food_position = Point(random.randint(0, screen_width) // 10 * 10,
-                                  random.randint(0, screen_height) // 10 * 10)
+            print("Head", snake_head_position.to_string())
+            food_position = Point(random.randint(0, screen_width) // pixel_size * pixel_size,
+                                  random.randint(0, screen_height) // pixel_size * pixel_size)
             snake_length += 1
 
         pygame.display.update()
@@ -135,6 +149,6 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
 
     game_over_screen(screen)
     print("Game Over")
-    pygame.draw.rect(screen, white, [snake_head_position.get_x(), snake_head_position.get_y(), 10, 10])
+    pygame.draw.rect(screen, white, [snake_head_position.get_x(), snake_head_position.get_y(), pixel_size, pixel_size])
     pygame.display.update()
     pygame.time.wait(4000)
