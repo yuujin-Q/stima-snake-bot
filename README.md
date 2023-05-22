@@ -1,12 +1,11 @@
-# Project Name
-> Outline a brief description of your project.
-> Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
+# Snake Bot using A* Search Algorithm 
+> A simple snake game with autoplay features using A* algorithm.
+> This project is made to fulfill an assignment from IF2211 - Algorithm Strategies - 2022/2023 lecture.
 
 ## Table of Contents
 * [Overview](#overview)
 * [Technologies Used](#technologies-used)
 * [Features](#features)
-* [Project Structure](#project-structure)
 * [Setup](#setup)
 * [Usage](#usage)
 * [Screenshots](#screenshots)
@@ -14,81 +13,65 @@
 * [Room for Improvement](#room-for-improvement)
 * [Acknowledgements](#acknowledgements)
 * [Author](#author)
-<!-- * [License](#license) -->
 
 
 ## Overview
-- Provide general information about your project here.
-- What problem does it (intend to) solve?
-- What is the purpose of your project?
-- Why did you undertake it?
-<!-- answer relevant questions to your project. -->
+- This project is a simple implementation of Snake game using Python (Pygame).
+- This project includes implementation of Snake game bot using A* algorithm.
 
 
 ## Technologies Used
-- Tech 1 - version 1.0
-- Tech 2 - version 2.0
+- Python 3
+- Pygame
 
 
 ## Features
-- Awesome feature 1
-- Awesome feature 2
-
-
-## Project Structure
-```
-(insert tree)
-```
+- Snake Game
+- Two modes of control: player control and autoplay
+- Snake food generation seed
 
 
 ## Setup
-What are the project requirements/dependencies? Where are they listed? A requirements.txt or a Pipfile.lock file perhaps? Where is it located?
-
-Proceed to describe how to install / setup one's local environment / get started with the project.
+Install [Python 3](https://www.python.org/downloads/) and Pygame. To install Pygame, use the following command.
+```shell
+pip install pygame
+```
 
 
 ## Usage
-How does one go about using it?
-Provide various use cases and code examples here.
-
-`write-your-code-here`
+1. Start the game by running this command in the root of repository.
+    ```shell
+    python src/snakegame.py
+    ```
+2. Click on `Play` to play and control the snake. Click on `Autoplay` to start the snake bot.
+3. Optionally, set food generation seed before clicking `Play` or `Autoplay`. To set seed, click on the box and type a string, then proceed to start the game.
+4. To control the snake, use arrow keys (not available on `Autoplay`).
+5. To pause or resume the game, press space bar key.
+6. To exit, press escape key.
 
 
 ## Screenshots
-(insert screenshots)
-<!-- ![Example screenshot](./img/screenshot.png) -->
-<!-- If you have screenshots you'd like to share, include them here. -->
+![Main Menu](./img/main_menu.jpg)
+![Gameplay](./img/gameplay.jpg)
 
 
 ## Project Status
-Project is: _in progress_ / _complete_ / _no longer being worked on_. If you are no longer working on it, provide reasons why.
+Project is: _complete_
 
 
 ## Room for Improvement
 Room for improvement:
-- Improvement to be done 1
-- Improvement to be done 2
-<!-- optional: TODOs -->
-To do:
-- Feature to be added 1
-- Feature to be added 2
+- GUI styling
+- Custom levels
+- Variable speed
 
 
 ## Acknowledgements
-Give credit here.
-- This project was inspired by...
-- This project was based on [this tutorial](https://www.example.com).
-- Many thanks to...
+- This project's base game implementation was based on [this tutorial](https://www.edureka.co/blog/snake-game-with-pygame/).
+- Many thanks to IF2211 - Algorithm Strategies - 2022/2023 lecturers.
 
 
 ## Author
 | Name                   | GitHub                                            | NIM      |
 |------------------------|---------------------------------------------------|----------|
 | Eugene Yap Jin Quan    | [yuujin-Q](https://github.com/yuujin-Q)           | 13521074 |
-<!-- insert more rows for contributors -->
-
-<!-- Optional -->
-<!-- ## License -->
-<!-- This project is open source and available under the [... License](). -->
-
-<!-- include relevant sections to your project -->
