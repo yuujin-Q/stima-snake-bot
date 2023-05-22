@@ -1,5 +1,6 @@
-# import random
 import pygame
+import time
+import random
 from src.logic.point.point import Point
 
 
@@ -36,9 +37,14 @@ def show_food_score(screen, score):
 
 
 def main_loop(screen, seed, bot_mode):
+    # Setup pygame and seed
     pygame.init()
     clock = pygame.time.Clock()
     screen_width, screen_height = screen.get_size()
+    if seed == "":
+        random.seed(int(time.time()))
+    else:
+        random.seed(seed)
 
     # Clear menu display
     screen.fill((0, 0, 0))
@@ -46,7 +52,7 @@ def main_loop(screen, seed, bot_mode):
 
     # Colors
     green = (65, 255, 0)
-    red = (144, 242, 21)
+    red = (238, 75, 43)
 
     # Game State Variables
     is_game_over = False
@@ -57,9 +63,13 @@ def main_loop(screen, seed, bot_mode):
     snake_head_direction = Point(0, 0)
     movement_queue = []
 
+    # Snake Body
+    # TODO: snake body
+    snake_body = []
+    snake_body_length = 0
+
     # Food and Food Score
-    food_position = Point(0, 0)
-    food_score = 0
+    food_position = Point(random.randint(0, screen_width) // 10 * 10, random.randint(0, screen_height) // 10 * 10)
 
     while is_game_over is False:
         events = pygame.event.get()
@@ -92,12 +102,17 @@ def main_loop(screen, seed, bot_mode):
             snake_head_direction = movement_queue.pop(0)
         snake_head_position += snake_head_direction
 
-        # Draw Snake
+        # Draw Snake and Food
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, green, [snake_head_position.get_x(), snake_head_position.get_y(), 10, 10])
+        pygame.draw.rect(screen, red, [food_position.get_x(), food_position.get_y(), 10, 10])
 
         # Update score
-        show_food_score(screen, food_score)
+        show_food_score(screen, snake_body_length)
+        if snake_head_position == food_position:
+            print("chew")
+            food_position = Point(random.randint(0, screen_width) // 10 * 10, random.randint(0, screen_height) // 10 * 10)
+            snake_body_length += 1
 
         pygame.display.update()
         clock.tick(24)
