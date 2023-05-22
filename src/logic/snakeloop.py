@@ -20,6 +20,21 @@ def get_keyboard_movement(events):
     return next_movement_direction
 
 
+def game_over_screen(screen):
+    game_over_font = pygame.font.Font(None, 40)
+    white = (255, 255, 255)
+    width, height = screen.get_size()
+    game_over_prompt = game_over_font.render("GAME OVER", True, white)
+    screen.blit(game_over_prompt, [width // 2 - 80, height // 2])
+
+
+def show_food_score(screen, score):
+    score_font = pygame.font.Font(None, 35)
+    white = (255, 255, 255)
+    score_value = score_font.render("SCORE: " + str(score), True, white)
+    screen.blit(score_value, [0, 0])
+
+
 def main_loop(screen, seed, bot_mode):
     pygame.init()
     clock = pygame.time.Clock()
@@ -41,6 +56,10 @@ def main_loop(screen, seed, bot_mode):
     snake_head_position = Point(300, 300)
     snake_head_direction = Point(0, 0)
     movement_queue = []
+
+    # Food and Food Score
+    food_position = Point(0, 0)
+    food_score = 0
 
     while is_game_over is False:
         events = pygame.event.get()
@@ -76,5 +95,14 @@ def main_loop(screen, seed, bot_mode):
         # Draw Snake
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, green, [snake_head_position.get_x(), snake_head_position.get_y(), 10, 10])
+
+        # Update score
+        show_food_score(screen, food_score)
+
         pygame.display.update()
         clock.tick(24)
+
+    game_over_screen(screen)
+    print("Game Over")
+    pygame.display.update()
+    pygame.time.wait(4000)
