@@ -1,4 +1,4 @@
-from src.logic.point.point import Point
+from logic.point.point import Point
 
 
 class GridMap:

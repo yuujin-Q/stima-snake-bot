@@ -1,8 +1,8 @@
 import pygame
 from queue import PriorityQueue
-from src.logic.snakebot.models.searchnode import SearchNode
-from src.logic.snakebot.models.gridmap import GridMap
-from src.logic.point.point import Point
+from logic.snakebot.models.searchnode import SearchNode
+from logic.snakebot.models.gridmap import GridMap
+from logic.point.point import Point
 
 
 class SnakeBot:

@@ -1,6 +1,3 @@
-from src.logic.point.point import Point
-
-
 class SearchNode:
     def __init__(self, search_point, path_list, path_cost):
         self.search_point = search_point

@@ -1,8 +1,8 @@
 import pygame
 import time
 import random
-from src.logic.point.point import Point
-from src.logic.snakebot.snakebot import SnakeBot
+from logic.point.point import Point
+from logic.snakebot.snakebot import SnakeBot
 
 pixel_size = 25
 

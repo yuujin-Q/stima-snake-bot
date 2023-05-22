@@ -1,6 +1,6 @@
 import pygame
 import sys
-from src.logic import snakeloop
+from logic import snakeloop
 
 
 def view_menu_screen(screen):
