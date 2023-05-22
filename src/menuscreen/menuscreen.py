@@ -1,5 +1,6 @@
 import pygame
 import sys
+from src.logic import snakeloop
 
 
 def view_menu_screen(screen):
@@ -37,15 +38,18 @@ def view_menu_screen(screen):
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_text_rect.collidepoint(event.pos):
+                    is_typing = False
                     print("Play button clicked!")
-                    # TODO: game logic (1)
+                    snakeloop.main_loop(screen, seed_input, False)
                 elif autoplay_text_rect.collidepoint(event.pos):
+                    is_typing = False
                     print("Autoplay!")
-                    # TODO: game logic (2)
+                    snakeloop.main_loop(screen, seed_input, True)
                 elif seed_text_rect.collidepoint(event.pos):
                     is_typing = True
                     print("Seed Input Active")
                 elif quit_text_rect.collidepoint(event.pos):
+                    is_typing = False
                     pygame.quit()
                     sys.exit()
             elif event.type == pygame.KEYDOWN and is_typing:
