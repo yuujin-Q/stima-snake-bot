@@ -17,13 +17,6 @@ class SnakeBot:
         self.show_debug = show_debug
 
     def plan_route(self, start_point, finish_point):
-        """AStar Search Algorithm
-        :param start_point: starting node point
-        :param finish_point: finish node point
-
-        :return: last search node movement list
-        """
-
         # SETUP: priority queue, starting node, explored nodes
         search_pqueue = PriorityQueue()
         starting_node = SearchNode(start_point, [], 0)
@@ -47,7 +40,7 @@ class SnakeBot:
 
                 file.write(str(node_priority) + "---" + current_node.get_search_point().to_string()
                            + str(current_node.get_path_cost()))
-                for move in current_node.get_movement_list():
+                for move in current_node.get_path_list():
                     file.write("   ")
                     file.write(move.to_string() + ",\n")
                 file.write("\n")
@@ -57,7 +50,7 @@ class SnakeBot:
 
             # Goal check: return from function if goal is met
             if current_node.get_search_point() == finish_point:
-                self.solution_path = current_node.get_movement_list()
+                self.solution_path = current_node.get_path_list()
                 self.solution_cost = current_node.get_path_cost()
 
                 print("Solution found")
@@ -73,7 +66,7 @@ class SnakeBot:
                                     Point.manhattan_distance(current_node.get_search_point(), neighbor_point)
                     # distance between neighbors in grid is same as manhattan distance
 
-                    new_neighbor_node = SearchNode(neighbor_point, current_node.get_movement_list(), neighbor_cost)
+                    new_neighbor_node = SearchNode(neighbor_point, current_node.get_path_list(), neighbor_cost)
 
                     # enqueue neighbor to search queue
                     node_priority = neighbor_cost + Point.euclidean_distance(neighbor_point, finish_point)
@@ -82,6 +75,11 @@ class SnakeBot:
 
             # mark current node as visited
             explored_points.add(current_node.get_search_point())
+
+            if search_pqueue.empty():
+                for position in current_node.get_path_list():
+                    print(position.to_string())
+                self.solution_path = current_node.get_path_list()[0:2]
 
         # Search failed
         print("Search failed")

@@ -28,8 +28,8 @@ def game_over_screen(screen):
     game_over_font = pygame.font.Font(None, 40)
     white = (255, 255, 255)
     width, height = screen.get_size()
-    game_over_prompt = game_over_font.render("GAME OVER", True, white)
-    screen.blit(game_over_prompt, [width // 2 - 80, height // 2])
+    game_over_prompt = game_over_font.render("GAME OVER - PRESS ESC", True, white)
+    screen.blit(game_over_prompt, [width // 2 - 180, height // 2])
 
 
 def show_food_score(screen, score):
@@ -39,7 +39,7 @@ def show_food_score(screen, score):
     screen.blit(score_value, [0, 0])
 
 
-def main_loop(screen, seed, bot_mode, snake_speed=30):
+def main_loop(screen, seed, bot_mode, snake_speed=30, debug=False):
     # Setup pygame and seed
     pygame.init()
     clock = pygame.time.Clock()
@@ -78,9 +78,10 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
         food_position = Point(random.randint(0, screen_width - pixel_size) // pixel_size * pixel_size,
                               random.randint(0, screen_height - pixel_size) // pixel_size * pixel_size)
 
-    print("Head", snake_head_position.to_string())
     while is_game_over is False:
-        print("Food", food_position.to_string())
+        if debug is True:
+            print("Head", snake_head_position.to_string())
+            print("Food", food_position.to_string())
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -88,11 +89,12 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     is_paused = not is_paused
+                elif event.key == pygame.K_ESCAPE:
+                    is_game_over = True
 
         # Get next movement
         if bot_mode is True:
             if len(movement_queue) <= 0:
-                print("Head", snake_head_position.to_string())
                 bot_service = SnakeBot(screen, snake_body, pixel_size, show_debug=False)
                 bot_service.plan_route(snake_head_position, food_position)
                 movement_queue = bot_service.get_movement_list()
@@ -136,7 +138,8 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
         show_food_score(screen, snake_length - 1)
         if snake_head_position == food_position:
             print("chew")
-            print("Head", snake_head_position.to_string())
+            if debug is True:
+                print("Head", snake_head_position.to_string())
 
             while food_position in snake_body:
                 food_position = Point(random.randint(0, screen_width - pixel_size) // pixel_size * pixel_size,
@@ -150,4 +153,12 @@ def main_loop(screen, seed, bot_mode, snake_speed=30):
     print("Game Over")
     pygame.draw.rect(screen, white, [snake_head_position.get_x(), snake_head_position.get_y(), pixel_size, pixel_size])
     pygame.display.update()
-    pygame.time.wait(4000)
+
+    exit_game = False
+    while exit_game is False:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit_game = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    exit_game = True

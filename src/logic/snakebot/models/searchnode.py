@@ -16,7 +16,7 @@ class SearchNode:
     def get_search_point(self):
         return self.search_point
 
-    def get_movement_list(self):
+    def get_path_list(self):
         return self.path_list[:]
 
     def get_path_cost(self):
