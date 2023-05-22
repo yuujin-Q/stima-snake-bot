@@ -36,7 +36,7 @@ def show_food_score(screen, score):
     screen.blit(score_value, [0, 0])
 
 
-def main_loop(screen, seed, bot_mode):
+def main_loop(screen, seed, bot_mode, snake_speed=30):
     # Setup pygame and seed
     pygame.init()
     clock = pygame.time.Clock()
@@ -53,6 +53,7 @@ def main_loop(screen, seed, bot_mode):
     # Colors
     green = (65, 255, 0)
     red = (238, 75, 43)
+    white = (255, 255, 255)
 
     # Game State Variables
     is_game_over = False
@@ -65,8 +66,8 @@ def main_loop(screen, seed, bot_mode):
 
     # Snake Body
     # TODO: snake body
-    snake_body = []
-    snake_body_length = 0
+    snake_body = [snake_head_position]
+    snake_length = 1
 
     # Food and Food Score
     food_position = Point(random.randint(0, screen_width) // 10 * 10, random.randint(0, screen_height) // 10 * 10)
@@ -96,28 +97,44 @@ def main_loop(screen, seed, bot_mode):
         if not (0 <= snake_head_position.get_x() < screen_width) or not (
                 0 <= snake_head_position.get_y() < screen_height):
             is_game_over = True
+        # Snake head-body collision check
+        for i in range(0, len(snake_body)-1):
+            if snake_body[i] == snake_head_position:
+                is_game_over = True
 
-        # Move Snake
+        # Move Snake using Movement Queued in List
         if len(movement_queue) > 0:
-            snake_head_direction = movement_queue.pop(0)
+            next_direction = movement_queue.pop(0)
+
+            # Check and prevent reverse direction
+            if snake_head_direction + next_direction != Point(0, 0):
+                snake_head_direction = next_direction
         snake_head_position += snake_head_direction
+
+        # Update Snake Segments
+        snake_body.append(snake_head_position)
+        if len(snake_body) > snake_length:
+            snake_body.pop(0)
 
         # Draw Snake and Food
         screen.fill((0, 0, 0))
-        pygame.draw.rect(screen, green, [snake_head_position.get_x(), snake_head_position.get_y(), 10, 10])
+        for snake_segment in snake_body:
+            pygame.draw.rect(screen, green, [snake_segment.get_x(), snake_segment.get_y(), 10, 10])
         pygame.draw.rect(screen, red, [food_position.get_x(), food_position.get_y(), 10, 10])
 
         # Update score
-        show_food_score(screen, snake_body_length)
+        show_food_score(screen, snake_length - 1)
         if snake_head_position == food_position:
             print("chew")
-            food_position = Point(random.randint(0, screen_width) // 10 * 10, random.randint(0, screen_height) // 10 * 10)
-            snake_body_length += 1
+            food_position = Point(random.randint(0, screen_width) // 10 * 10,
+                                  random.randint(0, screen_height) // 10 * 10)
+            snake_length += 1
 
         pygame.display.update()
-        clock.tick(24)
+        clock.tick(snake_speed)
 
     game_over_screen(screen)
     print("Game Over")
+    pygame.draw.rect(screen, white, [snake_head_position.get_x(), snake_head_position.get_y(), 10, 10])
     pygame.display.update()
     pygame.time.wait(4000)
